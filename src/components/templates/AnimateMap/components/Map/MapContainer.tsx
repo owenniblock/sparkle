@@ -6,7 +6,7 @@ import { MAP_IMAGE } from "../../constants/Resources";
 import {
   animateMapWorldBoundsSelector,
   animateMapZoomSelector,
-} from "../../../../../utils/selectors";
+} from "utils/selectors";
 import { useSelector } from "hooks/useSelector";
 import { LayerLOD } from "../LayerLOD/LayerLOD";
 import { MovedEventData, ZoomedEventData } from "pixi-viewport";
@@ -14,8 +14,8 @@ import {
   setAnimateMapZoom,
   updateAnimateMapUsers,
   updateAnimateMapVenues,
-} from "../../../../../store/actions/AnimateMap";
-import { useDispatch } from "../../../../../hooks/useDispatch";
+} from "store/actions/AnimateMap";
+import { useDispatch } from "hooks/useDispatch";
 import { Box } from "js-quadtree";
 import { stubUsersData, stubVenuesData } from "../../constants/StubVenuesData";
 
