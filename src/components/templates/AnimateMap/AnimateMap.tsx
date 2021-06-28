@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Provider, ReactReduxContext } from "react-redux";
-import { AppConsumer, Container, Stage, useApp } from "@inlet/react-pixi";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { Container, Stage, useApp } from "@inlet/react-pixi";
 import { AnimateMapVenue } from "types/venues";
 import { useUser } from "hooks/useUser";
 import { useSelector } from "hooks/useSelector";
@@ -10,6 +9,7 @@ import "./AnimateMap.scss";
 
 import { MapContainer } from "./components/Map/MapContainer";
 import { MAP_IMAGE } from "./constants/Resources";
+import { ReactReduxContext } from "react-redux";
 
 export interface AnimateMapProps {
   venue: AnimateMapVenue;
@@ -17,6 +17,7 @@ export interface AnimateMapProps {
 
 export const AnimateMap: React.FC<AnimateMapProps> = () => {
   const options = useSelector(animateMapStageOptionsSelector);
+  const reactReduxContextValue = useContext(ReactReduxContext);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { user, profile } = useUser();
@@ -30,24 +31,16 @@ export const AnimateMap: React.FC<AnimateMapProps> = () => {
   return (
     <div ref={containerRef} className="AnimateMap">
       {container && (
-        <ReactReduxContext.Consumer>
-          {({ store }) => (
-            <Stage
-              width={container.offsetWidth}
-              height={container.offsetHeight}
-              options={{ ...options, resizeTo: container }}
-              className="pixi-canvas AnimateMap__pixi-canvas"
-            >
-              <AppConsumer>
-                {(app) => (
-                  <Provider store={store}>
-                    {app ? <LoadingContainer /> : <Container />}
-                  </Provider>
-                )}
-              </AppConsumer>
-            </Stage>
-          )}
-        </ReactReduxContext.Consumer>
+        <Stage
+          width={container.offsetWidth}
+          height={container.offsetHeight}
+          options={{ ...options, resizeTo: container }}
+          className="pixi-canvas AnimateMap__pixi-canvas"
+        >
+          <ReactReduxContext.Provider value={reactReduxContextValue}>
+            <LoadingContainer />
+          </ReactReduxContext.Provider>
+        </Stage>
       )}
     </div>
   );
