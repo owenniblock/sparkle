@@ -1,10 +1,9 @@
-import {
+import { getRandomInt } from "../../../../../utils/getRandomInt";
+import { avatars, default_avatars, ROOM_ICON_3 } from "./AssetConstants";
+import GlobalStorage, {
   ReplicatedUser,
   ReplicatedVenue,
-} from "../../../../store/reducers/AnimateMap";
-import { getRandomInt } from "../../../../utils/getRandomInt";
-import { avatars, default_avatars, ROOM_ICON_3 } from "./AssetConstants";
-import GlobalStorage from "../storage/GlobalStorage";
+} from "../storage/GlobalStorage";
 
 export const stubVenuesData = () => {
   const venues: Map<string, ReplicatedVenue> = new Map();

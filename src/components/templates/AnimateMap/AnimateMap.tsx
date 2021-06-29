@@ -1,77 +1,39 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Container, Stage, useApp } from "@inlet/react-pixi";
-import { AnimateMapVenue } from "types/venues";
-import { useUser } from "hooks/useUser";
-import { useSelector } from "hooks/useSelector";
-import { animateMapStageOptionsSelector } from "utils/selectors";
+import React, { useEffect, useRef, useState } from "react";
 
 import "./AnimateMap.scss";
-
-import { MapContainer } from "./components/Map/MapContainer";
-import { MAP_IMAGE } from "./constants/Resources";
-import { ReactReduxContext } from "react-redux";
+import { GameInstance } from "./game/GameInstance";
+import { useFirebase } from "react-redux-firebase";
+import { FirebaseDataProvider } from "./DataProvider/FirebaseDataProvider";
+import { useStore } from "react-redux";
+import { AnimateMapVenue } from "../../../types/venues";
 
 export interface AnimateMapProps {
   venue: AnimateMapVenue;
 }
 
 export const AnimateMap: React.FC<AnimateMapProps> = () => {
-  const options = useSelector(animateMapStageOptionsSelector);
-  const reactReduxContextValue = useContext(ReactReduxContext);
-
+  const [app, setApp] = useState<GameInstance | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { user, profile } = useUser();
-
-  if (!user || !profile) {
-    return <>Loading..</>;
-  }
-
-  const container = containerRef.current ?? null;
-
-  return (
-    <div ref={containerRef} className="AnimateMap">
-      {container && (
-        <Stage
-          width={container.offsetWidth}
-          height={container.offsetHeight}
-          options={{ ...options, resizeTo: container }}
-          className="pixi-canvas AnimateMap__pixi-canvas"
-        >
-          <ReactReduxContext.Provider value={reactReduxContextValue}>
-            <LoadingContainer />
-          </ReactReduxContext.Provider>
-        </Stage>
-      )}
-    </div>
-  );
-};
-
-const LoadingContainer = () => {
-  const app = useApp();
-
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const firebase = useFirebase();
+  const store = useStore();
 
   useEffect(() => {
-    if (isLoading || !app) return;
+    if (!app && containerRef && containerRef.current) {
+      const dataProvider = new FirebaseDataProvider(firebase);
+      const game = new GameInstance(
+        dataProvider,
+        containerRef.current as HTMLDivElement,
+        store
+      );
 
-    setIsLoading(true);
+      game.init().then(() => game.start());
 
-    app.loader.reset().add(MAP_IMAGE).load();
-    app.loader.onLoad.add(() => setIsLoaded(true));
-    app.loader.onError.add(
-      (loader: PIXI.Loader, resource: PIXI.LoaderResource) =>
-        console.error(resource)
-    );
-  }, [isLoading, app]);
+      setApp(game);
+    }
+    return () => {
+      app?.release();
+    };
+  }, [containerRef, app, firebase, store]);
 
-  if (!isLoaded) {
-    return <Container />;
-  }
-
-  return <RootContainer />;
-};
-
-const RootContainer = () => {
-  return <MapContainer />;
+  return <div ref={containerRef} className="AnimateMap" />;
 };

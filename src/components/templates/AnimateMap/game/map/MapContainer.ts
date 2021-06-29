@@ -1,13 +1,12 @@
 import * as PIXI from "pixi.js";
 import { MovedEventData, Viewport, ZoomedEventData } from "pixi-viewport";
-import GlobalStorage from "../storage/GlobalStorage";
-import { MAP_IMAGE } from "../../AnimateMap/constants/Resources";
-import { Box, QuadTree } from "js-quadtree";
-import {
+import GlobalStorage, {
   ReplicatedUser,
   ReplicatedVenue,
-} from "../../../../store/reducers/AnimateMap";
+} from "../storage/GlobalStorage";
+import { Box, QuadTree } from "js-quadtree";
 import { MapLayer } from "./layers/MapLayer";
+import { MAP_IMAGE } from "../constants/AssetConstants";
 
 export enum MapLayerType {
   users = "usersQT",

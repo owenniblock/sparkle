@@ -4,7 +4,6 @@ import { LocationActions } from "./Location";
 import { RoomActions } from "./Room";
 import { SovereignVenueActions } from "./SovereignVenue";
 import { UserProfileActions } from "./UserProfile";
-import { AnimateMapActions } from "./AnimateMap";
 
 export type RootActions =
   | AttendanceActions
@@ -12,5 +11,4 @@ export type RootActions =
   | LocationActions
   | RoomActions
   | SovereignVenueActions
-  | UserProfileActions
-  | AnimateMapActions;
+  | UserProfileActions;

@@ -1,23 +1,33 @@
-import * as PIXI from "pixi.js";
-import React, { useEffect, useRef, useState } from "react";
-import { AnimateMapProps } from "../AnimateMap/AnimateMap";
+import {
+  Application,
+  Container,
+  Loader,
+  LoaderResource,
+  Renderer,
+} from "pixi.js";
 import { MapContainer } from "./map/MapContainer";
 import { assets } from "./constants/AssetConstants";
-
-import "./AnimateMap.scss";
-import { stubUsersData, stubVenuesData } from "./constants/StubVenuesData";
 import GlobalStorage from "./storage/GlobalStorage";
+import { stubUsersData, stubVenuesData } from "./constants/StubVenuesData";
+import { IDataProvider } from "../DataProvider/IDataProvider";
+import { Store } from "redux";
 
-class Application {
-  private _containerElement: HTMLDivElement | null = null;
-  private _app: PIXI.Application | null = null;
-  private _renderer: PIXI.Renderer | null = null;
+export class GameInstance {
+  // private _containerElement: HTMLDivElement | null = null;
+  private _app: Application | null = null;
+  private _renderer: Renderer | null = null;
 
-  private _stage: PIXI.Container | null = null;
+  private _stage: Container | null = null;
   private _mapContainer: MapContainer | null = null;
 
-  public async init(containerElement: HTMLDivElement): Promise<void> {
-    await this.initRenderer(containerElement);
+  constructor(
+    private _dataProvider: IDataProvider,
+    private _containerElement: HTMLDivElement,
+    private _store: Store
+  ) {}
+
+  public async init(): Promise<void> {
+    await this.initRenderer();
     await this.loadAssets(assets);
     await this.initMap();
   }
@@ -27,13 +37,11 @@ class Application {
     await this.releaseRenderer();
   }
 
-  private async initRenderer(containerElement: HTMLDivElement): Promise<void> {
-    this._containerElement = containerElement;
-
-    this._app = new PIXI.Application({
+  private async initRenderer(): Promise<void> {
+    this._app = new Application({
       transparent: true,
       antialias: true,
-      resizeTo: containerElement,
+      resizeTo: this._containerElement,
       backgroundColor: 0x10bb99,
       resolution: window.devicePixelRatio,
     });
@@ -41,7 +49,7 @@ class Application {
     this._renderer = this._app.renderer;
     this._stage = this._app.stage;
 
-    containerElement.appendChild(this._app.view);
+    this._containerElement.appendChild(this._app.view);
   }
 
   private async releaseRenderer(): Promise<void> {
@@ -80,8 +88,7 @@ class Application {
         resolve();
       });
       this._app?.loader.onError.add(
-        (loader: PIXI.Loader, resource: PIXI.LoaderResource) =>
-          console.error(resource)
+        (loader: Loader, resource: LoaderResource) => console.error(resource)
       );
 
       this._app?.loader.load();
@@ -111,22 +118,3 @@ class Application {
     this.resize();
   }
 }
-
-export const AnimateMap: React.FC<AnimateMapProps> = () => {
-  const [isAppInited, setIsAppInited] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isAppInited && containerRef && containerRef.current) {
-      const app = new Application();
-
-      app.init(containerRef.current as HTMLDivElement).then(() => {
-        app.start();
-      });
-
-      setIsAppInited(true);
-    }
-  }, [containerRef, isAppInited]);
-
-  return <div ref={containerRef} className="AnimateMap" />;
-};

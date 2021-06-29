@@ -1,11 +1,11 @@
+import { MapItem } from "./MapItem";
+import { MapItemSprite } from "./MapItemSprite";
 import {
   ReplicatedUser,
   ReplicatedUserData,
   ReplicatedVenue,
   ReplicatedVenueData,
-} from "store/reducers/AnimateMap";
-import { MapItem } from "./MapItem";
-import { MapItemSprite } from "./MapItemSprite";
+} from "../../storage/GlobalStorage";
 
 export const getVenuesForRender = (
   layer: number | undefined,

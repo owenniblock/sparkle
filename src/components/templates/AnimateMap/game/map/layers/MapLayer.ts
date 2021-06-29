@@ -1,6 +1,8 @@
 import * as PIXI from "pixi.js";
-import { ReplicatedUser, ReplicatedVenue } from "store/reducers/AnimateMap";
-import GlobalStorage from "../../storage/GlobalStorage";
+import GlobalStorage, {
+  ReplicatedUser,
+  ReplicatedVenue,
+} from "../../storage/GlobalStorage";
 import {
   getUsersForRender,
   getVenuesForRender,
