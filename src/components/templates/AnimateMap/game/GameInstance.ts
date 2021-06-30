@@ -9,7 +9,7 @@ import { MapContainer } from "./map/MapContainer";
 import { assets } from "./constants/AssetConstants";
 import GlobalStorage from "./storage/GlobalStorage";
 import { stubUsersData, stubVenuesData } from "./constants/StubVenuesData";
-import { IDataProvider } from "../DataProvider/IDataProvider";
+import { IBufferingDataProvider } from "../DataProvider/IBufferingDataProvider";
 import { Store } from "redux";
 import Movements from "./logic/Movements";
 
@@ -22,7 +22,7 @@ export class GameInstance {
   private _mapContainer: MapContainer | null = null;
 
   constructor(
-    private _dataProvider: IDataProvider,
+    private _dataProvider: IBufferingDataProvider,
     private _containerElement: HTMLDivElement,
     private _store: Store
   ) {}
