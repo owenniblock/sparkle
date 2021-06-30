@@ -3,6 +3,7 @@ import GlobalStorage, {
   ReplicatedUser,
   ReplicatedVenue,
 } from "../../storage/GlobalStorage";
+import TickProvider from "../../utils/TickProvider";
 import {
   getUsersForRender,
   getVenuesForRender,
@@ -29,9 +30,41 @@ export class MapLayer extends PIXI.Container {
     GlobalStorage.on("change:cameraRect", () => this._onUpdateBind());
     GlobalStorage.on("change:usersQT", () => this._onUpdateBind());
     GlobalStorage.on("change:venuesQT", () => this._onUpdateBind());
+
+    new TickProvider(this._onUsersAnimate).start();
   }
 
   public release(): void {}
+
+  protected _onUsersAnimate = (time: number): void => {
+    const layer = this._props?.layer;
+
+    const zoom = GlobalStorage.get("zoom");
+    const cameraRect = GlobalStorage.get("cameraRect");
+
+    const usersQT = GlobalStorage.get("usersQT");
+    // const venuesQT = GlobalStorage.get("venuesQT");
+
+    const isVisible = zoom === layer;
+
+    const usersForRender: ReplicatedUser[] = usersQT?.query(cameraRect);
+
+    // const venues = venuesQT?.query(cameraRect);
+
+    // const usersForRender = getUsersForRender(layer, users as ReplicatedUser[]);
+
+    if (isVisible) {
+      usersForRender.forEach((o) => {
+        const displayObject:
+          | PIXI.DisplayObject
+          | undefined = this.getChildByName(o.data.id);
+        if (displayObject) {
+          displayObject.x = o.x;
+          displayObject.y = o.y;
+        }
+      });
+    }
+  };
 
   // TODO: split to small functions with update checking
   protected _onUpdate(): void {

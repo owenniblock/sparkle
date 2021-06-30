@@ -11,6 +11,7 @@ import GlobalStorage from "./storage/GlobalStorage";
 import { stubUsersData, stubVenuesData } from "./constants/StubVenuesData";
 import { IDataProvider } from "../DataProvider/IDataProvider";
 import { Store } from "redux";
+import Movements from "./logic/Movements";
 
 export class GameInstance {
   // private _containerElement: HTMLDivElement | null = null;
@@ -30,6 +31,8 @@ export class GameInstance {
     await this.initRenderer();
     await this.loadAssets(assets);
     await this.initMap();
+
+    new Movements().init();
   }
 
   public async release(): Promise<void> {

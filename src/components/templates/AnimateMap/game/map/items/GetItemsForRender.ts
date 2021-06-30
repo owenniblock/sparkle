@@ -80,10 +80,10 @@ export const getUsersForRender = (
   switch (layer) {
     case 0:
       points.forEach((point, i) => {
-        const data = point.data as ReplicatedUserData;
+        const data: ReplicatedUserData = point.data as ReplicatedUserData;
         items.push(
           new MapItemSprite({
-            name: `user1_${i}`,
+            name: data.id,
             x: point.x,
             y: point.y,
             scale: 1,
@@ -98,7 +98,7 @@ export const getUsersForRender = (
         const data = point.data as ReplicatedUserData;
         items.push(
           new MapItemSprite({
-            name: `user2_${i}`,
+            name: data.id,
             x: point.x,
             y: point.y,
             scale: 0.8,
@@ -113,7 +113,7 @@ export const getUsersForRender = (
         const data = point.data as ReplicatedUserData;
         items.push(
           new MapItemSprite({
-            name: `user3_${i}`,
+            name: data.id,
             x: point.x,
             y: point.y,
             scale: 0.6,

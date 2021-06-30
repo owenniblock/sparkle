@@ -25,14 +25,14 @@ export const stubVenuesData = () => {
 
 export const stubUsersData = () => {
   const users: Map<string, ReplicatedUser> = new Map();
-  for (let i = 0; i < 300; i++) {
+  for (let i = 0; i < 100; i++) {
     const x = getRandomInt(GlobalStorage.get("worldWidth"));
     const y = getRandomInt(GlobalStorage.get("worldHeight"));
     users.set(i.toString(), {
       x: x,
       y: getRandomInt(GlobalStorage.get("worldHeight")),
       data: {
-        id: i.toString(),
+        id: `user${i}`,
         videoUrlString: avatars[x % 12],
         avatarUrlString: default_avatars[y % 4],
         dotColor: Math.floor(Math.random() * 16777215),
