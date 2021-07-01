@@ -1,27 +1,28 @@
-import * as PIXI from "pixi.js";
-import { IMapItem, MapItemProps } from "./IMapItem";
+import { Container } from "pixi.js";
+import { IMapItem, MapItemDefaultProps, MapItemProps } from "./IMapItem";
 
-export class MapItem extends PIXI.Container implements IMapItem {
-  protected _props: MapItemProps = {
-    name: Math.random().toString(),
-    x: 0,
-    y: 0,
-    scale: 1,
-    image: null,
-  };
+export class MapItem extends Container implements IMapItem {
+  protected _props: MapItemProps = MapItemDefaultProps;
 
-  constructor(props: MapItemProps) {
+  constructor() {
     super();
-
-    this._props = props;
   }
 
-  public async init(): Promise<void> {
-    this.name = this._props.name;
+  public async init(): Promise<void> {}
 
+  public async release(): Promise<void> {
+    this._props = MapItemDefaultProps;
+  }
+
+  public fillProps(props: MapItemProps): void {
+    this._props = props;
+
+    this.name = this._props.name;
     this.position.set(this._props.x, this._props.y);
     this.scale.set(this._props.scale);
   }
 
-  public async release(): Promise<void> {}
+  public get props(): MapItemProps {
+    return this._props;
+  }
 }

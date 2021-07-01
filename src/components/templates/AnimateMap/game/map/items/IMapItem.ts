@@ -6,6 +6,14 @@ export interface MapItemProps {
   image: string | null;
 }
 
+export const MapItemDefaultProps = {
+  name: Math.random().toString(),
+  x: 0,
+  y: 0,
+  scale: 1,
+  image: null,
+};
+
 export interface IMapItem {
   init(): Promise<void>;
   release(): Promise<void>;

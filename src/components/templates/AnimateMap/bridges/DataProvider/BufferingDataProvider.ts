@@ -12,6 +12,10 @@ export interface Point {
   y: number;
 }
 
+export enum BufferingDataProviderEvents {
+  PLAYER_BASE_POINT_CHANGED = "BufferingDataProviderEvents.PLAYER_BASE_POINT_CHANGED",
+}
+
 const FREQUENCY_UPDATE = 0.002; //per second
 
 /**
@@ -80,5 +84,7 @@ export class BufferingDataProvider
   private _basePointChangeHandler(args: null) {
     console.log("base Point changed");
     console.log(args);
+
+    this.emit(BufferingDataProviderEvents.PLAYER_BASE_POINT_CHANGED, args);
   }
 }

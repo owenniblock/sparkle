@@ -18,6 +18,8 @@ import DEFAULT_PROFILE_PIC_3_IMAGE from "assets/images/AnimateMap/avatars/defaul
 import DEFAULT_PROFILE_PIC_4_IMAGE from "assets/images/AnimateMap/avatars/default-profile-pic-4.png";
 import ANONYMOUS_PROFILE_ICON from "assets/images/AnimateMap/avatars/anonymous-profile-icon.jpeg";
 import ROOM_ICON_3 from "assets/images/AnimateMap/room-icon-3.png";
+import ROOM_ICON_7 from "assets/images/AnimateMap/room-icon-7.png";
+import ROOM_ICON_8 from "assets/images/AnimateMap/room-icon-8.png";
 
 const avatars = [
   AVATAR_01_IMAGE,
@@ -47,6 +49,8 @@ const assets = [
   MAP_IMAGE,
   ANONYMOUS_PROFILE_ICON,
   ROOM_ICON_3,
+  ROOM_ICON_7,
+  ROOM_ICON_8,
 ];
 
 export {
@@ -56,4 +60,6 @@ export {
   MAP_IMAGE,
   ANONYMOUS_PROFILE_ICON,
   ROOM_ICON_3,
+  ROOM_ICON_7,
+  ROOM_ICON_8,
 };

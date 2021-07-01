@@ -1,31 +1,36 @@
 import { Model } from "../utils/Model";
 import { Box, QuadTree } from "js-quadtree";
 
-export type AnimateMapWorldBounds = { width: number; height: number };
+export enum AnimateMapEntityType {
+  user,
+  venue,
+  userWithControls,
+}
 
-export interface AnimateMapPoint {
-  x: number; //integer
-  y: number; //integer
+export interface AnimateMapEntity {
+  type: AnimateMapEntityType;
+  id: string;
+  x: number;
+  y: number;
+  data: any;
 }
 
 export interface ReplicatedUserData {
-  id: string;
   videoUrlString: string;
-  avatarUrlString: string;
+  avatarUrlString: string | string[];
   dotColor: number; //hex
 }
 
-export interface ReplicatedUser extends AnimateMapPoint {
+export interface ReplicatedUser extends AnimateMapEntity {
   data: ReplicatedUserData;
 }
 
 export interface ReplicatedVenueData {
-  id: string;
   videoUrlString: string;
-  imageUrlString: string;
+  imageUrlString: string | string[];
 }
 
-export interface ReplicatedVenue extends AnimateMapPoint {
+export interface ReplicatedVenue extends AnimateMapEntity {
   data: ReplicatedVenueData;
 }
 
@@ -73,7 +78,7 @@ export default new Model({
   worldWidth: 9920,
   worldHeight: 9920,
   zoom: 5,
-  cameraRect: new Box(0, 0, 10000, 10000),
+  cameraRect: new Box(0, 0, 0, 0),
   hero: null,
   users: new Map(),
   venues: new Map(),

@@ -11,6 +11,7 @@ import GlobalStorage from "./storage/GlobalStorage";
 import { stubUsersData, stubVenuesData } from "./constants/StubVenuesData";
 import { IBufferingDataProvider } from "../bridges/IBufferingDataProvider";
 import Movements from "./logic/Movements";
+import EventManager from "./events/EventManager";
 
 export class GameInstance {
   private _app: Application | null = null;
@@ -25,6 +26,8 @@ export class GameInstance {
     private _containerElement: HTMLDivElement
   ) {
     this._movements = new Movements();
+
+    EventManager.setDataProvider(_dataProvider);
   }
 
   public async init(): Promise<void> {
@@ -107,6 +110,7 @@ export class GameInstance {
   private update(dt: number): void {
     // todo: width & height change checking
     this._movements.update(dt);
+    this._mapContainer?.update(dt);
   }
 
   /**

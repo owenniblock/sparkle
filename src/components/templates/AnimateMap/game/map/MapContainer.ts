@@ -1,27 +1,22 @@
 import * as PIXI from "pixi.js";
 import { MovedEventData, Viewport, ZoomedEventData } from "pixi-viewport";
-import GlobalStorage, {
-  ReplicatedUser,
-  ReplicatedVenue,
-} from "../storage/GlobalStorage";
-import { Box, QuadTree } from "js-quadtree";
-import { MapLayer } from "./layers/MapLayer";
+import GlobalStorage from "../storage/GlobalStorage";
+import { Box } from "js-quadtree";
+import { MapItemContainer } from "./MapItemContainer";
 import { MAP_IMAGE } from "../constants/AssetConstants";
-
-export enum MapLayerType {
-  users = "usersQT",
-  venues = "venuesQT",
-}
+import EventManager from "../events/EventManager";
+import {
+  EventType,
+  EventUpdateCameraRectProps,
+  EventUpdateCameraZoomProps,
+} from "../events/EventType";
 
 export class MapContainer extends PIXI.Container {
   private _background: PIXI.Sprite | null = null;
-  private _layerContainer: PIXI.Container | null = null;
+  private _itemContainer: MapItemContainer | null = null;
 
   private _viewport: Viewport | null = null;
   private _viewportRectMultiplier: number = 1.2;
-
-  private _quadTreeMap: Map<MapLayerType, QuadTree> = new Map();
-  private _layerMap: Map<MapLayerType, MapLayer> = new Map();
 
   constructor(private _app: PIXI.Application | null) {
     super();
@@ -30,10 +25,7 @@ export class MapContainer extends PIXI.Container {
   public async init(): Promise<void> {
     this.initViewport();
     this.initBackground();
-    this.initLayers();
-
-    this.generateNewQuadTree(MapLayerType.users, GlobalStorage.get("users"));
-    this.generateNewQuadTree(MapLayerType.venues, GlobalStorage.get("venues"));
+    this.initEntities();
   }
 
   private initViewport(): void {
@@ -74,27 +66,39 @@ export class MapContainer extends PIXI.Container {
     const width = data.viewport.screenWidth / view?.scaleX;
     const height = data.viewport.screenHeight / view?.scaleY;
 
-    GlobalStorage.set(
-      "cameraRect",
-      new Box(
-        x + (width - width * this._viewportRectMultiplier) / 2,
-        y + (height - height * this._viewportRectMultiplier) / 2,
-        width * this._viewportRectMultiplier,
-        height * this._viewportRectMultiplier
-      )
+    const rect = new Box(
+      x + (width - width * this._viewportRectMultiplier) / 2,
+      y + (height - height * this._viewportRectMultiplier) / 2,
+      width * this._viewportRectMultiplier,
+      height * this._viewportRectMultiplier
+    );
+
+    GlobalStorage.set("cameraRect", rect);
+
+    EventManager.emit(
+      EventType.UPDATE_CAMERA_RECT,
+      <EventUpdateCameraRectProps>rect
     );
   }
 
   private _onViewportZoomed(data: ZoomedEventData): void {
-    const layer = GlobalStorage.get("layer");
+    let layer = GlobalStorage.get("layer");
+    let value = 0;
 
     if (data.viewport.lastViewport.scaleY > 0.6 && layer !== 0) {
-      GlobalStorage.set("zoom", 0);
+      value = 0;
     } else if (data.viewport.lastViewport.scaleY < 0.2 && layer !== 2) {
-      GlobalStorage.set("zoom", 2);
+      value = 2;
     } else if (layer !== 1) {
-      GlobalStorage.set("zoom", 1);
+      value = 1;
     }
+
+    GlobalStorage.set("zoom", value);
+
+    EventManager.emit(
+      EventType.UPDATE_CAMERA_ZOOM,
+      <EventUpdateCameraZoomProps>value
+    );
   }
 
   private initBackground(): void {
@@ -102,51 +106,9 @@ export class MapContainer extends PIXI.Container {
     this._viewport?.addChild(this._background);
   }
 
-  private initLayers(): void {
-    this._layerContainer = new PIXI.Container();
-    this._viewport?.addChild(this._layerContainer);
-
-    Object.keys(MapLayerType).forEach((key, index) => {
-      const layer = new MapLayer({ layer: index });
-      layer.init();
-
-      this._layerContainer?.addChild(layer);
-
-      this._layerMap.set(
-        Object.values(MapLayerType)[index] as MapLayerType,
-        layer
-      );
-    });
-  }
-
-  private generateNewQuadTree(
-    type: MapLayerType,
-    items: Map<string, ReplicatedVenue | ReplicatedUser>
-  ): void {
-    let quadTree = this._quadTreeMap.get(type);
-
-    if (!quadTree) {
-      this._quadTreeMap.set(
-        type,
-        new QuadTree(
-          new Box(
-            0,
-            0,
-            GlobalStorage.get("worldWidth"),
-            GlobalStorage.get("worldHeight")
-          ),
-          { maximumDepth: 100 },
-          Array.from(items).map(([key, value]) => value)
-        )
-      );
-    } else {
-      quadTree.clear();
-      quadTree.insert(Array.from(items).map(([key, value]) => value));
-    }
-
-    quadTree = this._quadTreeMap.get(type);
-
-    GlobalStorage.set(type, quadTree);
+  private initEntities(): void {
+    this._itemContainer = new MapItemContainer();
+    this._viewport?.addChild(this._itemContainer);
   }
 
   public resize(width: number, height: number): void {
@@ -162,12 +124,22 @@ export class MapContainer extends PIXI.Container {
 
   private releaseBackground(): void {
     if (this._viewport && this._background) {
+      this._viewport.off("moved", this._onViewportMoved, this);
+      this._viewport.off("zoomed", this._onViewportZoomed, this);
+
       this._viewport.removeChild(this._background);
       this._background = null;
     }
   }
 
   private releaseViewport(): void {
-    // TODO:
+    if (this._viewport) {
+      this.removeChild(this._viewport);
+      this._viewport = null;
+    }
+  }
+
+  public update(dt: number): void {
+    this._itemContainer?.update(dt);
   }
 }

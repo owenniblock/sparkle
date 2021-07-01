@@ -1,7 +1,15 @@
 import { getRandomInt } from "../../../../../utils/getRandomInt";
-import { avatars, default_avatars, ROOM_ICON_3 } from "./AssetConstants";
+import { uuid } from "uuidv4";
+import {
+  avatars,
+  default_avatars,
+  ROOM_ICON_3,
+  ROOM_ICON_7,
+  ROOM_ICON_8,
+} from "./AssetConstants";
 import GlobalStorage, {
   AnimateMapConfig,
+  AnimateMapEntityType,
   ReplicatedUser,
   ReplicatedVenue,
 } from "../storage/GlobalStorage";
@@ -18,12 +26,13 @@ export const stubVenuesData = () => {
     const y =
       getRandomInt(GlobalStorage.get("worldHeight") - paddingV * 2) + paddingV;
     venues.set(i.toString(), {
-      x: x,
-      y: y,
+      id: uuid(),
+      type: AnimateMapEntityType.venue,
+      x,
+      y,
       data: {
-        id: i.toString(),
         videoUrlString: "",
-        imageUrlString: ROOM_ICON_3,
+        imageUrlString: [ROOM_ICON_3, ROOM_ICON_7, ROOM_ICON_8],
       },
     });
   }
@@ -41,10 +50,11 @@ export const stubUsersData = () => {
     const y =
       getRandomInt(GlobalStorage.get("worldHeight") - paddingV * 2) + paddingV;
     users.set(i.toString(), {
-      x: x,
-      y: y,
+      id: uuid(),
+      type: AnimateMapEntityType.user,
+      x,
+      y,
       data: {
-        id: `user${i}`,
         videoUrlString: avatars[x % 12],
         avatarUrlString: default_avatars[y % 4],
         dotColor: Math.floor(Math.random() * 16777215),

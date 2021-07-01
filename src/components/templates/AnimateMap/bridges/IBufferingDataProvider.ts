@@ -2,6 +2,10 @@
  * Usage interfaces for GameInstance class
  */
 export interface IBufferingDataProvider {
+  on(eventName: string, callback: Function): void;
+  off(eventName: string, callback: Function): void;
+  emit(eventName: string, props: any): void;
+
   // player: IPlayerDataProvider;
   release: () => void;
   initPlayerPositionAsync: (x: number, y: number) => Promise<void>;
