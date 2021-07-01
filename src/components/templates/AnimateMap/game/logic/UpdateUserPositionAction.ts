@@ -1,6 +1,6 @@
-import Action from "../../particles/actions/Action";
-import Emitter from "../../particles/emitters/Emitter";
-import Particle2D from "../../particles/particles/Particle2D";
+import Action from "../../vendors/particles/actions/Action";
+import Emitter from "../../vendors/particles/emitters/Emitter";
+import Particle2D from "../../vendors/particles/particles/Particle2D";
 import CustomParticle from "./CustomParticle";
 
 export default class UpdateUserPositionAction extends Action {

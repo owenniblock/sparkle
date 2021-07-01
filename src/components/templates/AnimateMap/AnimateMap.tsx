@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "./AnimateMap.scss";
 import { GameInstance } from "./game/GameInstance";
 import { useFirebase } from "react-redux-firebase";
-import { FirebaseBufferingDataProvider } from "./DataProvider/FirebaseBufferingDataProvider";
+import { BufferingDataProvider } from "./bridges/DataProvider/BufferingDataProvider";
 import { useStore } from "react-redux";
 import { AnimateMapVenue } from "../../../types/venues";
 import { useUser } from "../../../hooks/useUser";
@@ -21,17 +21,16 @@ export const AnimateMap: React.FC<AnimateMapProps> = () => {
 
   useEffect(() => {
     if (!app && containerRef && containerRef.current) {
-      const dataProvider = new FirebaseBufferingDataProvider(
-        firebase,
-        user.userId
-      );
+      const dataProvider = new BufferingDataProvider(firebase, user.userId);
       const game = new GameInstance(
         dataProvider,
-        containerRef.current as HTMLDivElement,
-        store
+        containerRef.current as HTMLDivElement
       );
 
-      game.init().then(() => game.start());
+      game
+        .init()
+        .then(() => game.start())
+        .catch((error) => console.log(error));
 
       setApp(game);
     }

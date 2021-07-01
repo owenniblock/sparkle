@@ -14,23 +14,17 @@ export enum MapLayerType {
 }
 
 export class MapContainer extends PIXI.Container {
-  private _app: PIXI.Application | null = null;
-
   private _background: PIXI.Sprite | null = null;
   private _layerContainer: PIXI.Container | null = null;
 
   private _viewport: Viewport | null = null;
   private _viewportRectMultiplier: number = 1.2;
-  private _onViewportMovedBind: (data: MovedEventData) => void = () => {};
-  private _onViewportZoomedBind: (data: ZoomedEventData) => void = () => {};
 
   private _quadTreeMap: Map<MapLayerType, QuadTree> = new Map();
   private _layerMap: Map<MapLayerType, MapLayer> = new Map();
 
-  constructor(app: PIXI.Application | null) {
+  constructor(private _app: PIXI.Application | null) {
     super();
-
-    this._app = app;
   }
 
   public async init(): Promise<void> {
@@ -42,17 +36,9 @@ export class MapContainer extends PIXI.Container {
     this.generateNewQuadTree(MapLayerType.venues, GlobalStorage.get("venues"));
   }
 
-  public async release(): Promise<void> {
-    this.releaseBackground();
-    this.releaseViewport();
-  }
-
   private initViewport(): void {
     const worldWidth = GlobalStorage.get("worldWidth");
     const worldHeight = GlobalStorage.get("worldHeight");
-
-    this._onViewportMovedBind = this._onViewportMoved.bind(this);
-    this._onViewportZoomedBind = this._onViewportZoomed.bind(this);
 
     this._viewport = new Viewport({
       worldWidth: worldWidth,
@@ -75,8 +61,8 @@ export class MapContainer extends PIXI.Container {
       });
 
     this._viewport.moveCenter(worldWidth / 2, worldHeight / 2);
-    this._viewport.on("moved", this._onViewportMovedBind);
-    this._viewport.on("zoomed", this._onViewportZoomedBind);
+    this._viewport.on("moved", this._onViewportMoved, this);
+    this._viewport.on("zoomed", this._onViewportZoomed, this);
 
     this.addChild(this._viewport);
   }
@@ -111,20 +97,9 @@ export class MapContainer extends PIXI.Container {
     }
   }
 
-  private releaseViewport(): void {
-    // TODO:
-  }
-
   private initBackground(): void {
     this._background = PIXI.Sprite.from(MAP_IMAGE);
     this._viewport?.addChild(this._background);
-  }
-
-  private releaseBackground(): void {
-    if (this._viewport && this._background) {
-      this._viewport.removeChild(this._background);
-      this._background = null;
-    }
   }
 
   private initLayers(): void {
@@ -178,5 +153,21 @@ export class MapContainer extends PIXI.Container {
     if (this._viewport) {
       this._viewport.resize(width, height);
     }
+  }
+
+  public async release(): Promise<void> {
+    this.releaseBackground();
+    this.releaseViewport();
+  }
+
+  private releaseBackground(): void {
+    if (this._viewport && this._background) {
+      this._viewport.removeChild(this._background);
+      this._background = null;
+    }
+  }
+
+  private releaseViewport(): void {
+    // TODO:
   }
 }

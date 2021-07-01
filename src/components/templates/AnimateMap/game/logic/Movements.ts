@@ -1,14 +1,14 @@
-import ActionCallback from "../../particles/actions/ActionCallback";
-import BoundingBox from "../../particles/actions/BoundingBox";
-import CollisionZone from "../../particles/actions/CollisionZone";
-import Move from "../../particles/actions/Move";
-import SpeedLimit from "../../particles/actions/SpeedLimit";
-import TurnTowardsPoint from "../../particles/actions/TurnTowardsPoint";
-import ZonedAction from "../../particles/actions/ZonedAction";
-import Emitter from "../../particles/emitters/Emitter";
-import CircleZone from "../../particles/zones/CircleZone";
-import RectangleZone from "../../particles/zones/RectangleZone";
-import { Point } from "../../particles/zones/Zone2D";
+import ActionCallback from "../../vendors/particles/actions/ActionCallback";
+import BoundingBox from "../../vendors/particles/actions/BoundingBox";
+import CollisionZone from "../../vendors/particles/actions/CollisionZone";
+import Move from "../../vendors/particles/actions/Move";
+import SpeedLimit from "../../vendors/particles/actions/SpeedLimit";
+import TurnTowardsPoint from "../../vendors/particles/actions/TurnTowardsPoint";
+import ZonedAction from "../../vendors/particles/actions/ZonedAction";
+import Emitter from "../../vendors/particles/emitters/Emitter";
+import CircleZone from "../../vendors/particles/zones/CircleZone";
+import RectangleZone from "../../vendors/particles/zones/RectangleZone";
+import { Point } from "../../vendors/particles/zones/Zone2D";
 import GlobalStorage, {
   AnimateMapConfig,
   ReplicatedUser,

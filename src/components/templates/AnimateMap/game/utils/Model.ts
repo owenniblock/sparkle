@@ -1,6 +1,6 @@
-import * as PIXI from "pixi.js";
+import { utils } from "pixi.js";
 
-export class Model extends PIXI.utils.EventEmitter {
+export class Model extends utils.EventEmitter {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public attributes: Map<string, any> = new Map<string, any>();
 

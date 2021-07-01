@@ -9,38 +9,34 @@ import { MapContainer } from "./map/MapContainer";
 import { assets } from "./constants/AssetConstants";
 import GlobalStorage from "./storage/GlobalStorage";
 import { stubUsersData, stubVenuesData } from "./constants/StubVenuesData";
-import { IBufferingDataProvider } from "../DataProvider/IBufferingDataProvider";
-import { Store } from "redux";
+import { IBufferingDataProvider } from "../bridges/IBufferingDataProvider";
 import Movements from "./logic/Movements";
 
 export class GameInstance {
-  // private _containerElement: HTMLDivElement | null = null;
   private _app: Application | null = null;
   private _renderer: Renderer | null = null;
-  private _movements: Movements | null = null;
+  private _movements: Movements;
 
   private _stage: Container | null = null;
   private _mapContainer: MapContainer | null = null;
 
   constructor(
     private _dataProvider: IBufferingDataProvider,
-    private _containerElement: HTMLDivElement,
-    private _store: Store
-  ) {}
+    private _containerElement: HTMLDivElement
+  ) {
+    this._movements = new Movements();
+  }
 
   public async init(): Promise<void> {
+    // if (!this._app) //Note: broke?
+    //   return Promise.reject("App already init!")
+
     await this.initRenderer();
     await this.loadAssets(assets);
     await this.initMap();
 
-    this._movements = new Movements();
     this._movements.init();
-  }
-
-  public async release(): Promise<void> {
     window.addEventListener("resize", this.resize);
-    await this.releaseMap();
-    await this.releaseRenderer();
   }
 
   private async initRenderer(): Promise<void> {
@@ -58,13 +54,6 @@ export class GameInstance {
     this._containerElement.appendChild(this._app.view);
   }
 
-  private async releaseRenderer(): Promise<void> {
-    if (this._app) {
-      this._app.ticker.remove(this.update, this);
-      this._app.destroy(false);
-    }
-  }
-
   private async initMap(): Promise<void> {
     GlobalStorage.set("users", stubUsersData());
     GlobalStorage.set("venues", stubVenuesData());
@@ -74,14 +63,6 @@ export class GameInstance {
     await this._mapContainer.init();
 
     this._stage?.addChild(this._mapContainer);
-  }
-
-  private async releaseMap(): Promise<void> {
-    if (this._mapContainer) {
-      this._stage?.removeChild(this._mapContainer);
-
-      await this._mapContainer.release();
-    }
   }
 
   private loadAssets(resources: string[]): Promise<void> {
@@ -125,8 +106,29 @@ export class GameInstance {
 
   private update(dt: number): void {
     // todo: width & height change checking
-    if (this._movements) {
-      this._movements.update(dt);
+    this._movements.update(dt);
+  }
+
+  /**
+   * Release methods
+   */
+  public async release(): Promise<void> {
+    await this.releaseMap();
+    await this.releaseRenderer();
+  }
+
+  private async releaseRenderer(): Promise<void> {
+    if (this._app) {
+      this._app.ticker.remove(this.update, this);
+      this._app.destroy(false);
+    }
+  }
+
+  private async releaseMap(): Promise<void> {
+    if (this._mapContainer) {
+      this._stage?.removeChild(this._mapContainer);
+
+      await this._mapContainer.release();
     }
   }
 }

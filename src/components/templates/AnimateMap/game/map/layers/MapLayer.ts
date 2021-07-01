@@ -14,27 +14,17 @@ export interface LayerProps {
 }
 
 export class MapLayer extends PIXI.Container {
-  protected _onUpdateBind: () => void = () => {};
-  protected _props: LayerProps | null = null;
-
-  constructor(props: LayerProps) {
+  constructor(private _props: LayerProps | null) {
     super();
-
-    this._props = props;
   }
 
   public init(): void {
-    this._onUpdateBind = this._onUpdate.bind(this);
-
-    GlobalStorage.on("change:zoom", () => this._onUpdateBind());
-    GlobalStorage.on("change:cameraRect", () => this._onUpdateBind());
-    GlobalStorage.on("change:usersQT", () => this._onUpdateBind());
-    GlobalStorage.on("change:venuesQT", () => this._onUpdateBind());
-
+    GlobalStorage.on("change:zoom", this._onUpdate, this);
+    GlobalStorage.on("change:cameraRect", this._onUpdate, this);
+    GlobalStorage.on("change:usersQT", this._onUpdate, this);
+    GlobalStorage.on("change:venuesQT", this._onUpdate, this);
     new TickProvider(this._onUsersAnimate).start();
   }
-
-  public release(): void {}
 
   protected _onUsersAnimate = (time: number): void => {
     const layer = this._props?.layer;
@@ -65,13 +55,14 @@ export class MapLayer extends PIXI.Container {
   protected _onUpdate(): void {
     const layer = this._props?.layer;
 
-    const zoom = GlobalStorage.get("zoom");
+    // const zoom = GlobalStorage.get("zoom");
     const cameraRect = GlobalStorage.get("cameraRect");
 
     const usersQT = GlobalStorage.get("usersQT");
     const venuesQT = GlobalStorage.get("venuesQT");
 
-    const isVisible = zoom === layer;
+    // const isVisible = zoom === layer;
+    const isVisible = true;
 
     const users = usersQT?.query(cameraRect);
     const venues = venuesQT?.query(cameraRect);
@@ -101,4 +92,6 @@ export class MapLayer extends PIXI.Container {
       this.removeChildAt(0);
     }
   }
+
+  public release(): void {}
 }
