@@ -43,15 +43,10 @@ export class MapLayer extends PIXI.Container {
     const cameraRect = GlobalStorage.get("cameraRect");
 
     const usersQT = GlobalStorage.get("usersQT");
-    // const venuesQT = GlobalStorage.get("venuesQT");
 
     const isVisible = zoom === layer;
 
     const usersForRender: ReplicatedUser[] = usersQT?.query(cameraRect);
-
-    // const venues = venuesQT?.query(cameraRect);
-
-    // const usersForRender = getUsersForRender(layer, users as ReplicatedUser[]);
 
     if (isVisible) {
       usersForRender.forEach((o) => {

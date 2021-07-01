@@ -17,6 +17,7 @@ export class GameInstance {
   // private _containerElement: HTMLDivElement | null = null;
   private _app: Application | null = null;
   private _renderer: Renderer | null = null;
+  private _movements: Movements | null = null;
 
   private _stage: Container | null = null;
   private _mapContainer: MapContainer | null = null;
@@ -32,10 +33,12 @@ export class GameInstance {
     await this.loadAssets(assets);
     await this.initMap();
 
-    new Movements().init();
+    this._movements = new Movements();
+    this._movements.init();
   }
 
   public async release(): Promise<void> {
+    window.addEventListener("resize", this.resize);
     await this.releaseMap();
     await this.releaseRenderer();
   }
@@ -102,22 +105,28 @@ export class GameInstance {
     if (this._app) {
       this._app.start();
       this._app.ticker.add(this.update, this);
+      this.resize();
+
+      window.addEventListener("resize", this.resize);
     }
   }
 
   private resize(): void {
     if (this._renderer) {
-      const w = this._renderer.width;
-      const h = this._renderer.height;
+      const rect: DOMRect = this._containerElement.getBoundingClientRect();
+
+      this._renderer.resize(rect.width, rect.height);
 
       if (this._mapContainer) {
-        this._mapContainer.resize(w, h);
+        this._mapContainer.resize(rect.width, rect.height);
       }
     }
   }
 
   private update(dt: number): void {
     // todo: width & height change checking
-    this.resize();
+    if (this._movements) {
+      this._movements.update(dt);
+    }
   }
 }

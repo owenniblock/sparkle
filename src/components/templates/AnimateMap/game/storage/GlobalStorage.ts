@@ -49,16 +49,24 @@ export interface ReplicatedVenue extends AnimateMapPoint {
 //   }
 // }
 
+export class AnimateMapConfig {
+  WALKER_DEFAULT_SPEED = 1;
+  QA_BOTS_NUMBER = 100;
+  QA_VENUES_NUMBER = 80;
+}
+
 export interface IGlobalStorage {
   worldWidth: number;
   worldHeight: number;
   zoom: number;
   layer: number;
   cameraRect: Box;
+  hero: ReplicatedUser | null;
   users: Map<string, ReplicatedUser>;
   venues: Map<string, ReplicatedVenue>;
   usersQT: QuadTree | null;
   venuesQT: QuadTree | null;
+  config: AnimateMapConfig | null;
 }
 
 export default new Model({
@@ -66,8 +74,10 @@ export default new Model({
   worldHeight: 9920,
   zoom: 5,
   cameraRect: new Box(0, 0, 10000, 10000),
+  hero: null,
   users: new Map(),
   venues: new Map(),
   usersQT: null,
   venuesQT: null,
+  config: new AnimateMapConfig(),
 } as IGlobalStorage);

@@ -1,15 +1,22 @@
 import { getRandomInt } from "../../../../../utils/getRandomInt";
 import { avatars, default_avatars, ROOM_ICON_3 } from "./AssetConstants";
 import GlobalStorage, {
+  AnimateMapConfig,
   ReplicatedUser,
   ReplicatedVenue,
 } from "../storage/GlobalStorage";
 
 export const stubVenuesData = () => {
   const venues: Map<string, ReplicatedVenue> = new Map();
-  for (let i = 0; i < 80; i++) {
-    const x = getRandomInt(GlobalStorage.get("worldWidth"));
-    const y = getRandomInt(GlobalStorage.get("worldHeight"));
+  const len = (GlobalStorage.get("config") as AnimateMapConfig)
+    .QA_VENUES_NUMBER;
+  const paddingH = GlobalStorage.get("worldWidth") * 0.1;
+  const paddingV = GlobalStorage.get("worldHeight") * 0.1;
+  for (let i = 0; i < len; i++) {
+    const x =
+      getRandomInt(GlobalStorage.get("worldWidth") - paddingH * 2) + paddingH;
+    const y =
+      getRandomInt(GlobalStorage.get("worldHeight") - paddingV * 2) + paddingV;
     venues.set(i.toString(), {
       x: x,
       y: y,
@@ -25,12 +32,17 @@ export const stubVenuesData = () => {
 
 export const stubUsersData = () => {
   const users: Map<string, ReplicatedUser> = new Map();
-  for (let i = 0; i < 100; i++) {
-    const x = getRandomInt(GlobalStorage.get("worldWidth"));
-    const y = getRandomInt(GlobalStorage.get("worldHeight"));
+  const len = (GlobalStorage.get("config") as AnimateMapConfig).QA_BOTS_NUMBER;
+  const paddingH = GlobalStorage.get("worldWidth") * 0.1;
+  const paddingV = GlobalStorage.get("worldHeight") * 0.1;
+  for (let i = 0; i < len; i++) {
+    const x =
+      getRandomInt(GlobalStorage.get("worldWidth") - paddingH * 2) + paddingH;
+    const y =
+      getRandomInt(GlobalStorage.get("worldHeight") - paddingV * 2) + paddingV;
     users.set(i.toString(), {
       x: x,
-      y: getRandomInt(GlobalStorage.get("worldHeight")),
+      y: y,
       data: {
         id: `user${i}`,
         videoUrlString: avatars[x % 12],
