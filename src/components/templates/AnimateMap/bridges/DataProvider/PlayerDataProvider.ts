@@ -25,6 +25,10 @@ export class PlayerDataProvider
     return this._isReady;
   }
 
+  get position() {
+    return { x: this._basePoint.x, y: this._basePoint.y };
+  }
+
   private _setBasePoint(x: number, y: number) {
     this._basePoint.x = x;
     this._basePoint.y = y;

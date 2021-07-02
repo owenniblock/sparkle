@@ -1,6 +1,8 @@
 /**
  * Usage interfaces for GameInstance class
  */
+import { Point } from "./DataProvider/BufferingDataProvider";
+
 export interface IBufferingDataProvider {
   on(eventName: string, callback: Function): void;
 
@@ -20,7 +22,8 @@ export interface IBufferingDataProvider {
 }
 
 export interface IPlayerDataProvider {
-  initPositionAsync: (x: number, y: number) => Promise<void>;
-  setPosition: (x: number, y: number) => void;
+  // initPositionAsync: (x: number, y: number) => Promise<void>;
+  // setPosition: (x: number, y: number) => void;
   isReady: () => boolean;
+  position: Point;
 }

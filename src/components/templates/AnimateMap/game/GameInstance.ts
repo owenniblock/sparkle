@@ -12,6 +12,7 @@ import { stubUsersData, stubVenuesData } from "./constants/StubVenuesData";
 import { IBufferingDataProvider } from "../bridges/IBufferingDataProvider";
 import Movements from "./logic/Movements";
 import EventManager from "./events/EventManager";
+import playerModel from "./storage/PlayerModel";
 
 export class GameInstance {
   private _app: Application | null = null;
@@ -33,6 +34,14 @@ export class GameInstance {
   public async init(): Promise<void> {
     // if (!this._app) //Note: broke?
     //   return Promise.reject("App already init!")
+
+    if (this._dataProvider.player.isReady()) {
+      const pos = this._dataProvider.player.position;
+      playerModel.set("x", pos.x);
+      playerModel.set("y", pos.y);
+    } else {
+      await this._dataProvider.initPlayerPositionAsync(9920 / 2, 9920 / 2);
+    }
 
     await this.initRenderer();
     await this.loadAssets(assets);
