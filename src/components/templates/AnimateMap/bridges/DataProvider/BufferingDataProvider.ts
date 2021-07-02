@@ -1,6 +1,5 @@
 import { ExtendedFirebaseInstance } from "react-redux-firebase";
 import { IBufferingDataProvider } from "../IBufferingDataProvider";
-import { FrameTickProvider } from "@ash.ts/tick";
 import { FirebaseDataProvider } from "./FirebaseDataProvider";
 import {
   PlayerDataProvider,
@@ -24,7 +23,6 @@ const FREQUENCY_UPDATE = 0.002; //per second
 export class BufferingDataProvider
   extends FirebaseDataProvider
   implements IBufferingDataProvider {
-  private _tickProvider: FrameTickProvider;
   private _updateCounter = 0;
   private _maxUpdateCounter = 1 / FREQUENCY_UPDATE;
   readonly player: PlayerDataProvider;
@@ -51,25 +49,19 @@ export class BufferingDataProvider
       this._basePointChangeHandler,
       this
     );
-
-    this._tickProvider = new FrameTickProvider();
-    this._tickProvider.add(this._update.bind(this));
-    this._tickProvider.start();
   }
 
-  private _update(a: number) {
-    this._updateCounter += a;
+  public update(dt: number) {
+    this._updateCounter += dt;
     if (this._updateCounter > this._maxUpdateCounter) {
       this._updateCounter -= this._maxUpdateCounter;
       this.player.updatePosition();
-      this._update(0);
+      this.update(0);
     }
   }
 
   public release() {
     this.player.release();
-    this._tickProvider.stop();
-    this._tickProvider.remove(this._update.bind(this));
   }
 
   // player provider

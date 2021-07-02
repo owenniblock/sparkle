@@ -3,11 +3,18 @@
  */
 export interface IBufferingDataProvider {
   on(eventName: string, callback: Function): void;
+
   off(eventName: string, callback: Function): void;
+
+  // eslint-disable-next-line
   emit(eventName: string, props: any): void;
 
-  // player: IPlayerDataProvider;
+  update(dt: number): void;
+
   release: () => void;
+
+  // player: IPlayerDataProvider;
+  player: IPlayerDataProvider;
   initPlayerPositionAsync: (x: number, y: number) => Promise<void>;
   setPlayerPosition: (x: number, y: number) => void;
 }

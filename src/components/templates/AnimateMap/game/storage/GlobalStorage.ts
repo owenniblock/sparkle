@@ -12,7 +12,7 @@ export interface AnimateMapEntity {
   id: string;
   x: number;
   y: number;
-  data: any;
+  data: ReplicatedUserData | ReplicatedVenueData;
 }
 
 export interface ReplicatedUserData {
@@ -55,7 +55,7 @@ export interface ReplicatedVenue extends AnimateMapEntity {
 // }
 
 export class AnimateMapConfig {
-  WALKER_DEFAULT_SPEED = 1;
+  WALKER_DEFAULT_SPEED = 10;
   QA_BOTS_NUMBER = 100;
   QA_VENUES_NUMBER = 80;
 }

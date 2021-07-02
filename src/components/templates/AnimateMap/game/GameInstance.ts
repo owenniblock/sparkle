@@ -109,6 +109,7 @@ export class GameInstance {
 
   private update(dt: number): void {
     // todo: width & height change checking
+    this._dataProvider.update(dt);
     this._movements.update(dt);
     this._mapContainer?.update(dt);
   }

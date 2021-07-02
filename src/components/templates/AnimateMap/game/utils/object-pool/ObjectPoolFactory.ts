@@ -5,6 +5,7 @@ import { ObjectPool } from "./ObjectPool";
  *
  * @ignore
  */
+// eslint-disable-next-line
 const poolMap: Map<{ new (): any }, ObjectPool<any>> = new Map();
 
 /**
@@ -31,16 +32,17 @@ export class ObjectPoolFactory {
    * Builds an object-pool for objects constructed from the given class with a default constructor. If an
    * object pool for that class was already created, an existing instance is returned.
    *
-   * @param classConstructor
    */
+  // eslint-disable-next-line
   static build<T>(Type: { new (): T }): ObjectPool<T> {
     let pool = poolMap.get(Type);
 
     if (pool) {
       return pool;
     }
-
+    // eslint-disable-next-line
     pool = new (class DefaultObjectPool extends ObjectPool<any> {
+      // eslint-disable-next-line
       create(): any {
         return new Type();
       }

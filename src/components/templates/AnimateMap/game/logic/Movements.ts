@@ -19,6 +19,10 @@ import UpdateUserPositionAction from "./UpdateUserPositionAction";
 import { KeyPoll } from "../utils/KeyPoll";
 import * as Keyboard from "../utils/Keyboard";
 import { FrameTickProvider } from "@ash.ts/tick";
+import playerModel from "../storage/PlayerModel";
+import EventManager from "../events/EventManager";
+import { EventType } from "../events/EventType";
+// import { InteractionEvent } from "pixi.js";
 
 export default class Movements {
   private hero: ReplicatedUser | null = null;
@@ -105,19 +109,23 @@ export default class Movements {
       mainEmitter.addParticle(this.heroParticle);
     } else {
       // get hero from bots
-      const itr:
-        | IterableIterator<ReplicatedUser>
-        | undefined = this.users?.values();
-      if (!itr || !mainEmitter.particles.length) {
-        return;
-      }
-
-      this.heroParticle = mainEmitter.particles[0] as CustomParticle;
+      // const itr:
+      //   | IterableIterator<ReplicatedUser>
+      //   | undefined = this.users?.values();
+      // if (!itr || !mainEmitter.particles.length) {
+      //   return;
+      // }
+      // this.heroParticle = mainEmitter.particles[0] as CustomParticle;
+      this.hero = playerModel;
+      this.heroParticle = new CustomParticle(this.hero);
+      this.hero.x = GlobalStorage.get("worldWidth") / 2;
+      this.hero.y = GlobalStorage.get("worldHeight") / 2;
       this.heroParticle.x = GlobalStorage.get("worldWidth") / 2;
       this.heroParticle.y = GlobalStorage.get("worldHeight") / 2;
       this.heroParticle.velX = 0;
       this.heroParticle.velY = 0;
-      this.hero = this.heroParticle.user;
+      mainEmitter.addParticle(this.heroParticle);
+      // this.hero = this.heroParticle.user;
     }
 
     if (this.hero) {
@@ -157,7 +165,9 @@ export default class Movements {
       destinationZone
     );
 
-    document.body.addEventListener("click", (e: MouseEvent) => {
+    // document.body.addEventListener("click", (e: MouseEvent) => {
+    EventManager.on(EventType.POINTERDOWN_ON_VIEWPORT, (e: Point) => {
+      console.log(e);
       // start pointed
       pointed = true;
       keyboarded = !pointed;
@@ -165,14 +175,15 @@ export default class Movements {
       if (!this.heroParticle || !this.heroEmitter) {
         return;
       }
-
+      // eslint-disable-next-line
       this.heroParticle.velX = (GlobalStorage.get(
         "config"
       ) as AnimateMapConfig).WALKER_DEFAULT_SPEED;
+      // eslint-disable-next-line
       this.heroParticle.velY = this.heroParticle.velX;
 
-      turnTowardsPoint.x = e.clientX;
-      turnTowardsPoint.y = e.clientY;
+      turnTowardsPoint.x = e.x;
+      turnTowardsPoint.y = e.y;
       if (!this.heroEmitter.hasAction(turnTowardsPoint)) {
         this.heroEmitter.addAction(turnTowardsPoint);
       }

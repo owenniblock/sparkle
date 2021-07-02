@@ -3,7 +3,9 @@ import GlobalStorage, {
   AnimateMapEntity,
   AnimateMapEntityType,
   ReplicatedUser,
+  ReplicatedUserData,
   ReplicatedVenue,
+  ReplicatedVenueData,
 } from "../storage/GlobalStorage";
 import { ObjectPoolFactory } from "../utils/object-pool/ObjectPoolFactory";
 import { ObjectPool } from "../utils/object-pool/ObjectPool";
@@ -15,6 +17,7 @@ import {
 } from "../events/EventType";
 import { Box, QuadTree } from "js-quadtree";
 import { MapItemSprite } from "./items/MapItemSprite";
+import playerModel from "../storage/PlayerModel";
 
 export class MapItemContainer extends Container {
   private _itemsSpritePoolSize: number = 200;
@@ -24,8 +27,8 @@ export class MapItemContainer extends Container {
   private _itemsSpritePoolToIdMap: Map<string, MapItemSprite> = new Map();
 
   private _quadTree: QuadTree | null = null;
-  private _quadTreeQuery: any[] = [];
-  private _previousQuadTreeQuery: any[] = [];
+  private _quadTreeQuery: Array<ReplicatedUser | ReplicatedVenue> = [];
+  private _previousQuadTreeQuery: Array<ReplicatedUser | ReplicatedVenue> = [];
 
   private _previousItems: AnimateMapEntity[] = [];
 
@@ -57,9 +60,11 @@ export class MapItemContainer extends Container {
 
   protected updateQuadTree(
     users: ReplicatedUser[] = Array.from(GlobalStorage.get("users")).map(
+      // eslint-disable-next-line
       ([key, value]: any) => value
     ),
     venues: ReplicatedVenue[] = Array.from(GlobalStorage.get("venues")).map(
+      // eslint-disable-next-line
       ([key, value]: any) => value
     )
   ): void {
@@ -68,7 +73,7 @@ export class MapItemContainer extends Container {
 
     // FIXME: optimize
     // то что касается добавления и удаления из стейта
-    const items = [...venues, ...users] as AnimateMapEntity[];
+    const items = [...venues, ...users, playerModel] as AnimateMapEntity[];
 
     const removeItems = this._previousItems?.filter((x) => !items.includes(x));
     const addItems = items?.filter((x) => !this._previousItems.includes(x));
@@ -80,6 +85,7 @@ export class MapItemContainer extends Container {
     //
 
     this._previousQuadTreeQuery = this._quadTreeQuery;
+    // eslint-disable-next-line
     this._quadTreeQuery = this._quadTree?.query(cameraRect) as any; // FIXME: correct cast to AnimateMapEntity
 
     const removeQueryItems = this._previousQuadTreeQuery?.filter(
@@ -110,6 +116,17 @@ export class MapItemContainer extends Container {
 
         switch (item.type) {
           case AnimateMapEntityType.user:
+            mapSprite = this.getNewItem();
+            mapSprite?.fillProps({
+              x: item.x,
+              y: item.y,
+              scale: 1,
+              name: item.id,
+              image: this._getImageFromQueryItemAndZoom(item, zoom),
+            });
+            break;
+
+          case AnimateMapEntityType.userWithControls:
             mapSprite = this.getNewItem();
             mapSprite?.fillProps({
               x: item.x,
@@ -207,14 +224,18 @@ export class MapItemContainer extends Container {
 
   private _onUpdateUsers(users: EventUpdateUsersProps): void {
     this.updateQuadTree(
+      // eslint-disable-next-line
       Array.from(users).map(([key, value]: any) => value),
+      // eslint-disable-next-line
       Array.from(GlobalStorage.get("venues")).map(([key, value]: any) => value)
     );
   }
 
   private _onUpdateVenues(venues: EventUpdateVenuesProps): void {
     this.updateQuadTree(
+      // eslint-disable-next-line
       Array.from(GlobalStorage.get("users")).map(([key, value]: any) => value),
+      // eslint-disable-next-line
       Array.from(venues).map(([key, value]: any) => value)
     );
   }
@@ -227,7 +248,8 @@ export class MapItemContainer extends Container {
 
     switch (item.type) {
       case AnimateMapEntityType.user:
-        const avatarUrlString = item.data.avatarUrlString;
+        const avatarUrlString = (item.data as ReplicatedUserData)
+          .avatarUrlString;
 
         if (Array.isArray(avatarUrlString)) {
           image = avatarUrlString[Math.min(zoom, avatarUrlString.length - 1)];
@@ -236,8 +258,20 @@ export class MapItemContainer extends Container {
         }
         break;
 
+      case AnimateMapEntityType.userWithControls:
+        const _avatarUrlString = (item.data as ReplicatedUserData)
+          .avatarUrlString;
+
+        if (Array.isArray(_avatarUrlString)) {
+          image = _avatarUrlString[Math.min(zoom, _avatarUrlString.length - 1)];
+        } else {
+          image = _avatarUrlString;
+        }
+        break;
+
       case AnimateMapEntityType.venue:
-        const imageUrlString = item.data.imageUrlString;
+        const imageUrlString = (item.data as ReplicatedVenueData)
+          .imageUrlString;
 
         if (Array.isArray(imageUrlString)) {
           image = imageUrlString[Math.min(zoom, imageUrlString.length - 1)];

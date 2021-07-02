@@ -4,10 +4,6 @@ import { IMapItem, MapItemDefaultProps, MapItemProps } from "./IMapItem";
 export class MapItem extends Container implements IMapItem {
   protected _props: MapItemProps = MapItemDefaultProps;
 
-  constructor() {
-    super();
-  }
-
   public async init(): Promise<void> {}
 
   public async release(): Promise<void> {

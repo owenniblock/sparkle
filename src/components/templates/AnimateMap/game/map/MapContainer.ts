@@ -26,6 +26,23 @@ export class MapContainer extends PIXI.Container {
     this.initViewport();
     this.initBackground();
     this.initEntities();
+
+    this._viewport?.on(
+      "click",
+      (e) => {
+        console.log("click");
+        if (this._background)
+          EventManager.emit(
+            EventType.POINTERDOWN_ON_VIEWPORT,
+            e.data.getLocalPosition(
+              this._background,
+              e.data.global,
+              e.data.global
+            )
+          );
+      },
+      this
+    );
   }
 
   private initViewport(): void {
@@ -77,7 +94,7 @@ export class MapContainer extends PIXI.Container {
 
     EventManager.emit(
       EventType.UPDATE_CAMERA_RECT,
-      <EventUpdateCameraRectProps>rect
+      rect as EventUpdateCameraRectProps
     );
   }
 
@@ -97,12 +114,13 @@ export class MapContainer extends PIXI.Container {
 
     EventManager.emit(
       EventType.UPDATE_CAMERA_ZOOM,
-      <EventUpdateCameraZoomProps>value
+      value as EventUpdateCameraZoomProps
     );
   }
 
   private initBackground(): void {
     this._background = PIXI.Sprite.from(MAP_IMAGE);
+
     this._viewport?.addChild(this._background);
   }
 

@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ash.ts/tick": "^1.2.1",
     "@bugsnag/js": "^7.5.1",
     "@bugsnag/plugin-react": "^7.3.5",
     "@fortawesome/fontawesome-svg-core": "^1.2.32",

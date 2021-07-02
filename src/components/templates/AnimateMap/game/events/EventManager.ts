@@ -6,10 +6,6 @@ import { utils } from "pixi.js";
 class _EventManager extends utils.EventEmitter {
   private _dataProvider: IBufferingDataProvider | null = null;
 
-  constructor() {
-    super();
-  }
-
   public setDataProvider(dataProvider: IBufferingDataProvider): void {
     if (!dataProvider) {
       return;
@@ -24,9 +20,10 @@ class _EventManager extends utils.EventEmitter {
   }
 
   private _onPlayerBasePointChanged({ x, y }: { x: number; y: number }) {
-    this.emit(EventType.UPDATE_PLAYER_POSITION, <
-      EventUpdatePlayerPositionProps
-    >{ x, y });
+    this.emit(EventType.UPDATE_PLAYER_POSITION, {
+      x,
+      y,
+    } as EventUpdatePlayerPositionProps);
   }
 }
 

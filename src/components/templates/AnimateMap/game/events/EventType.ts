@@ -7,6 +7,7 @@ export enum EventType {
   UPDATE_USERS = "EventType.UPDATE_USERS",
   UPDATE_VENUES = "EventType.UPDATE_VENUES",
   UPDATE_PLAYER_POSITION = "EventType.UPDATE_PLAYER_POSITION",
+  POINTERDOWN_ON_VIEWPORT = "EventType.POINTERDOWN_ON_VIEWPORT",
 }
 
 export type EventUpdateCameraZoomProps = number;
