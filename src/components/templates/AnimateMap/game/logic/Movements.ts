@@ -58,7 +58,7 @@ export default class Movements {
 
   public update = (time: number): void => {
     for (let i = 0; i < this.emitters.length; i++) {
-      this.emitters[0].update(time);
+      this.emitters[i].update(time);
     }
   };
 
