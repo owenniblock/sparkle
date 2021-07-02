@@ -1,4 +1,3 @@
-import { Model } from "../utils/Model";
 import {
   AnimateMapEntityType,
   ReplicatedUser,
@@ -6,25 +5,16 @@ import {
 } from "./GlobalStorage";
 import { ANONYMOUS_PROFILE_ICON } from "../constants/AssetConstants";
 
-// interface IPlayerModel {
-//   x: number;
-//   y: number;
-//
-
-class PlayerModel extends Model implements ReplicatedUser {
+class PlayerModel implements ReplicatedUser {
   data: ReplicatedUserData = {
     videoUrlString: ANONYMOUS_PROFILE_ICON,
     avatarUrlString: ANONYMOUS_PROFILE_ICON,
     dotColor: Math.floor(Math.random() * 16777215),
   };
-  id: string = "tgbcwmTuh0gNwyvU1HTPvp5TMWB2";
+  id: string = "";
   type: AnimateMapEntityType = AnimateMapEntityType.userWithControls;
-  x: number = 9920 / 2;
-  y: number = 9920 / 2;
-
-  constructor(attributes = {}) {
-    super(attributes);
-  }
+  x: number = 4960;
+  y: number = 4960;
 }
 
 const playerModel = new PlayerModel();

@@ -4,8 +4,6 @@ import {
 } from "react-redux-firebase";
 import { utils } from "pixi.js";
 
-// import EventEmitter = PIXI.utils.EventEmitter;
-
 export class FirebaseDataProvider extends utils.EventEmitter {
   protected _firestore: ExtendedFirestoreInstance;
 

@@ -21,10 +21,14 @@ export const AnimateMap: React.FC<AnimateMapProps> = () => {
 
   useEffect(() => {
     if (!app && containerRef && containerRef.current) {
-      const dataProvider = new BufferingDataProvider(firebase, user.userId);
+      const dataProvider = new BufferingDataProvider(
+        firebase,
+        user.userId ? user.userId : "undefined"
+      );
       const game = new GameInstance(
         dataProvider,
-        containerRef.current as HTMLDivElement
+        containerRef.current as HTMLDivElement,
+        user.profile?.pictureUrl
       );
 
       game

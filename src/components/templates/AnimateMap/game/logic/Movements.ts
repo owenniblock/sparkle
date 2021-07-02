@@ -22,7 +22,6 @@ import { FrameTickProvider } from "@ash.ts/tick";
 import playerModel from "../storage/PlayerModel";
 import EventManager from "../events/EventManager";
 import { EventType } from "../events/EventType";
-// import { InteractionEvent } from "pixi.js";
 
 export default class Movements {
   private hero: ReplicatedUser | null = null;
@@ -92,7 +91,7 @@ export default class Movements {
       venue;
       venue = itr.next().value
     ) {
-      mainEmitter.addAction(new CollisionZone(new CircleZone(venue, 100)));
+      mainEmitter.addAction(new CollisionZone(new CircleZone(venue, 30)));
     }
   }
 
@@ -100,33 +99,18 @@ export default class Movements {
     const mainEmitter: Emitter = this.emitters[0];
     const hero: ReplicatedUser = GlobalStorage.get("hero");
     if (hero) {
-      // get hero from Model
       this.hero = hero;
-      this.heroParticle = new CustomParticle(this.hero);
-      this.heroParticle.x = this.hero.x;
-      this.heroParticle.y = this.hero.y;
-      this.heroParticle.collisionRadius = this.WALKER_DEFAULT_COLLISION_RADIUS;
-      mainEmitter.addParticle(this.heroParticle);
     } else {
-      // get hero from bots
-      // const itr:
-      //   | IterableIterator<ReplicatedUser>
-      //   | undefined = this.users?.values();
-      // if (!itr || !mainEmitter.particles.length) {
-      //   return;
-      // }
-      // this.heroParticle = mainEmitter.particles[0] as CustomParticle;
       this.hero = playerModel;
-      this.heroParticle = new CustomParticle(this.hero);
-      this.hero.x = GlobalStorage.get("worldWidth") / 2;
-      this.hero.y = GlobalStorage.get("worldHeight") / 2;
-      this.heroParticle.x = GlobalStorage.get("worldWidth") / 2;
-      this.heroParticle.y = GlobalStorage.get("worldHeight") / 2;
-      this.heroParticle.velX = 0;
-      this.heroParticle.velY = 0;
-      mainEmitter.addParticle(this.heroParticle);
-      // this.hero = this.heroParticle.user;
+      GlobalStorage.set(this.hero);
     }
+    this.heroParticle = new CustomParticle(this.hero);
+    this.heroParticle.x = this.hero.x;
+    this.heroParticle.y = this.hero.y;
+    this.heroParticle.velX = 0;
+    this.heroParticle.velY = 0;
+    this.heroParticle.collisionRadius = this.WALKER_DEFAULT_COLLISION_RADIUS;
+    mainEmitter.addParticle(this.heroParticle);
 
     if (this.hero) {
       this.createHeroControlModule();

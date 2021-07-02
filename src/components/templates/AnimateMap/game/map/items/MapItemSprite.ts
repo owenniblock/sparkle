@@ -7,7 +7,8 @@ export class MapItemSprite extends MapItem {
 
   public async init(): Promise<void> {
     this._sprite = new Sprite();
-    this._sprite.anchor.set(0.5);
+    this._sprite.anchor.set(0.5, 0);
+    this._sprite.scale.set(0.2);
     this.addChild(this._sprite);
   }
 

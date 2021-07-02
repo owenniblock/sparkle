@@ -34,26 +34,6 @@ export interface ReplicatedVenue extends AnimateMapEntity {
   data: ReplicatedVenueData;
 }
 
-// function generateNewQuadtree(
-//   items: Map<string, ReplicatedVenue | ReplicatedUser>,
-//   quadTree: QuadTree | null
-// ): QuadTree {
-//   if (!quadTree) {
-//     // create tree
-//     quadTree = new QuadTree(
-//       new Box(0, 0, state.worldWidth, state.worldHeight),
-//       { maximumDepth: 100 },
-//       Array.from(items).map(([key, value]) => value)
-//     );
-//     return quadTree;
-//   } else {
-//     // update tree
-//     quadTree.clear(); //NOTE: can optimize if we will remove certain elements before update
-//     quadTree.insert(Array.from(items).map(([key, value]) => value));
-//     return quadTree;
-//   }
-// }
-
 export class AnimateMapConfig {
   WALKER_DEFAULT_SPEED = 10;
   QA_BOTS_NUMBER = 100;
@@ -68,6 +48,7 @@ export interface IGlobalStorage {
   cameraRect: Box;
   hero: ReplicatedUser | null;
   users: Map<string, ReplicatedUser>;
+  replicatedUsers: Map<string, ReplicatedUser>;
   venues: Map<string, ReplicatedVenue>;
   usersQT: QuadTree | null;
   venuesQT: QuadTree | null;
@@ -81,6 +62,7 @@ export default new Model({
   cameraRect: new Box(0, 0, 0, 0),
   hero: null,
   users: new Map(),
+  replicatedUsers: new Map(),
   venues: new Map(),
   usersQT: null,
   venuesQT: null,

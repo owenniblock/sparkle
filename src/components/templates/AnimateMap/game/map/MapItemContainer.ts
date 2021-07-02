@@ -38,6 +38,8 @@ export class MapItemContainer extends Container {
   constructor() {
     super();
 
+    // this.sortableChildren = true;
+
     this._itemsSpritePool.reserve(this._itemsSpritePoolSize);
 
     this._quadTree = new QuadTree(
@@ -70,10 +72,21 @@ export class MapItemContainer extends Container {
   ): void {
     const zoom = GlobalStorage.get("zoom");
     const cameraRect = GlobalStorage.get("cameraRect");
+    const replicatedUsers: ReplicatedUser[] = Array.from(
+      GlobalStorage.get("replicatedUsers")
+    ).map(
+      // eslint-disable-next-line
+      ([key, value]: any) => value
+    );
 
     // FIXME: optimize
     // то что касается добавления и удаления из стейта
-    const items = [...venues, ...users, playerModel] as AnimateMapEntity[];
+    const items = [
+      ...venues,
+      ...users,
+      ...replicatedUsers,
+      playerModel,
+    ] as AnimateMapEntity[];
 
     const removeItems = this._previousItems?.filter((x) => !items.includes(x));
     const addItems = items?.filter((x) => !this._previousItems.includes(x));
@@ -189,6 +202,7 @@ export class MapItemContainer extends Container {
       if (sprite) {
         sprite.x = item.x;
         sprite.y = item.y;
+        // sprite.zIndex = sprite.y;
       }
     });
 
